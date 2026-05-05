@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RuangTanya</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--cream:#fdf6ec;--ink:#1a1209;--amber:#e8890c;--amber-light:#fbb040;--amber-pale:#fef3dc;--rust:#c0440a;--sage:#4a7c59;--sh:rgba(26,18,9,0.12);--sh2:rgba(26,18,9,0.22);--tr:0.28s cubic-bezier(.4,0,.2,1);}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);min-height:100vh;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;z-index:0;background:radial-gradient(ellipse 70% 55% at 10% 20%,#fde9c0 0%,transparent 60%),radial-gradient(ellipse 50% 40% at 90% 80%,#fde3b4 0%,transparent 55%);pointer-events:none;}
+body::after{content:'';position:fixed;inset:0;z-index:0;background-image:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23e8890c' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/svg%3E");pointer-events:none;}
+.app{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:column;}
+
+/* HEADER */
+header{padding:1.1rem 2rem;display:flex;align-items:center;justify-content:space-between;background:rgba(253,246,236,0.88);backdrop-filter:blur(14px);border-bottom:1.5px solid rgba(232,137,12,0.18);position:sticky;top:0;z-index:100;box-shadow:0 2px 18px rgba(26,18,9,0.06);}
+.logo{font-family:'Playfair Display',serif;font-size:clamp(1.35rem,2.8vw,1.9rem);font-weight:900;color:var(--ink);letter-spacing:-0.02em;}
+.logo em{color:var(--amber);font-style:normal;}
+.hbtns{display:flex;gap:0.6rem;align-items:center;}
+.btn-hdr{background:var(--ink);color:var(--cream);border:none;border-radius:50px;padding:0.52rem 1.35rem;font-family:'DM Sans',sans-serif;font-size:0.86rem;font-weight:600;cursor:pointer;transition:var(--tr);}
+.btn-hdr:hover{background:var(--amber);color:var(--ink);}
+.btn-hdr.out{background:transparent;color:var(--ink);border:1.5px solid rgba(26,18,9,0.22);}
+.btn-hdr.out:hover{background:var(--ink);color:var(--cream);}
+
+/* VIEWS */
+.view{display:none;flex:1;flex-direction:column;}
+.view.active{display:flex;}
+
+/* HOME */
+.home-body{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:3rem 1.5rem 6rem;}
+.hero{text-align:center;max-width:540px;margin-bottom:2.5rem;animation:fadeUp 0.65s ease both;}
+.hero-badge{display:inline-block;background:var(--amber-pale);color:var(--rust);border:1.5px solid rgba(232,137,12,0.32);border-radius:50px;padding:0.28rem 1rem;font-size:0.76rem;font-weight:700;letter-spacing:0.09em;text-transform:uppercase;margin-bottom:1.1rem;}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(2rem,5vw,3.4rem);font-weight:900;line-height:1.12;margin-bottom:0.85rem;}
+.hero h1 em{color:var(--amber);font-style:normal;}
+.hero p{font-size:1rem;color:#6b5c42;line-height:1.7;}
+.ask-card{width:100%;max-width:620px;background:rgba(255,255,255,0.78);backdrop-filter:blur(18px);border:1.5px solid rgba(232,137,12,0.2);border-radius:24px;padding:2rem;box-shadow:0 10px 44px var(--sh),0 1px 0 rgba(255,255,255,0.95) inset;animation:fadeUp 0.65s 0.13s ease both;position:relative;}
+.ask-card::before{content:'';position:absolute;top:-1px;left:2.5rem;right:2.5rem;height:3px;background:linear-gradient(90deg,var(--amber),var(--amber-light));border-radius:0 0 6px 6px;}
+.ask-lbl{font-size:0.75rem;font-weight:700;letter-spacing:0.11em;text-transform:uppercase;color:var(--amber);margin-bottom:0.7rem;}
+textarea{width:100%;min-height:140px;background:rgba(253,246,236,0.65);border:1.5px solid rgba(232,137,12,0.22);border-radius:14px;padding:1rem 1.1rem;font-family:'DM Sans',sans-serif;font-size:0.98rem;color:var(--ink);resize:vertical;outline:none;transition:var(--tr);line-height:1.65;}
+textarea::placeholder{color:#c4ad91;}
+textarea:focus{border-color:var(--amber);background:rgba(255,255,255,0.92);box-shadow:0 0 0 4px rgba(232,137,12,0.1);}
+.form-footer{display:flex;align-items:center;justify-content:space-between;margin-top:0.9rem;gap:0.75rem;flex-wrap:wrap;}
+.char-count{font-size:0.78rem;color:#c4ad91;}
+.btn-send{background:linear-gradient(135deg,var(--amber),#f5a623);color:var(--ink);border:none;border-radius:50px;padding:0.75rem 2rem;font-family:'DM Sans',sans-serif;font-size:0.95rem;font-weight:700;cursor:pointer;transition:var(--tr);box-shadow:0 4px 18px rgba(232,137,12,0.38);}
+.btn-send:hover{transform:translateY(-2px);box-shadow:0 8px 26px rgba(232,137,12,0.48);}
+.btn-send:disabled{opacity:0.55;cursor:not-allowed;transform:none;}
+
+/* AUTH */
+.auth-center{flex:1;display:flex;align-items:center;justify-content:center;padding:2rem 1.5rem 5rem;}
+.auth-box{width:100%;max-width:460px;background:rgba(255,255,255,0.82);backdrop-filter:blur(18px);border:1.5px solid rgba(232,137,12,0.2);border-radius:26px;padding:2.4rem 2rem;box-shadow:0 12px 50px var(--sh);position:relative;}
+.auth-box::before{content:'';position:absolute;top:-1px;left:2.5rem;right:2.5rem;height:3px;background:linear-gradient(90deg,var(--amber),var(--amber-light));border-radius:0 0 6px 6px;}
+.auth-icon{font-size:2.2rem;text-align:center;margin-bottom:0.5rem;}
+.auth-title{font-family:'Playfair Display',serif;font-size:1.9rem;font-weight:900;text-align:center;margin-bottom:0.3rem;}
+.auth-sub{text-align:center;color:#6b5c42;font-size:0.88rem;margin-bottom:1.8rem;line-height:1.55;}
+.field{margin-bottom:1rem;}
+.field label{font-size:0.73rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--amber);display:block;margin-bottom:0.4rem;}
+.field input{width:100%;background:rgba(253,246,236,0.8);border:1.5px solid rgba(232,137,12,0.24);border-radius:11px;padding:0.72rem 1rem;font-family:'DM Sans',sans-serif;font-size:0.94rem;color:var(--ink);outline:none;transition:var(--tr);}
+.field input:focus{border-color:var(--amber);background:white;box-shadow:0 0 0 4px rgba(232,137,12,0.1);}
+.field-hint{font-size:0.72rem;color:#c4ad91;margin-top:0.3rem;}
+.field-err{font-size:0.72rem;color:var(--rust);margin-top:0.3rem;display:none;}
+.field-err.show{display:block;}
+.btn-full{width:100%;background:linear-gradient(135deg,var(--amber),#f5a623);color:var(--ink);border:none;border-radius:50px;padding:0.88rem;font-family:'DM Sans',sans-serif;font-size:0.98rem;font-weight:700;cursor:pointer;transition:var(--tr);box-shadow:0 4px 18px rgba(232,137,12,0.38);margin-top:0.4rem;}
+.btn-full:hover{transform:translateY(-2px);box-shadow:0 8px 26px rgba(232,137,12,0.48);}
+.btn-full:disabled{opacity:0.55;cursor:not-allowed;transform:none;}
+.auth-switch{text-align:center;margin-top:1.2rem;font-size:0.88rem;color:#6b5c42;}
+.auth-switch a{color:var(--amber);font-weight:700;cursor:pointer;}
+.auth-switch a:hover{text-decoration:underline;}
+.alert{border-radius:11px;padding:0.7rem 1rem;font-size:0.84rem;font-weight:600;margin-bottom:1rem;display:none;}
+.alert.show{display:block;}
+.alert.err{background:#fde8e8;color:var(--rust);}
+.alert.ok{background:#e8f5e9;color:#2e7d32;}
+.alert.info{background:var(--amber-pale);color:#7a4b00;}
+
+/* VERIFY */
+.verify-wrap{text-align:center;padding:1rem;}
+.verify-wrap .big-icon{font-size:4rem;margin-bottom:1rem;}
+.verify-wrap h2{font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:900;margin-bottom:0.6rem;}
+.verify-wrap p{color:#6b5c42;line-height:1.65;margin-bottom:1.4rem;}
+
+/* SUCCESS */
+.success-wrap{display:flex;flex-direction:column;align-items:center;text-align:center;padding:1.5rem 1rem;gap:0.7rem;}
+.success-wrap .sicon{font-size:3.5rem;}
+.success-wrap h3{font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:900;}
+.success-wrap p{color:#6b5c42;font-size:0.92rem;line-height:1.6;}
+.btn-lagi{margin-top:0.4rem;background:var(--amber-pale);color:var(--amber);border:1.5px solid rgba(232,137,12,0.3);border-radius:50px;padding:0.62rem 1.6rem;font-family:'DM Sans',sans-serif;font-size:0.9rem;font-weight:700;cursor:pointer;transition:var(--tr);}
+.btn-lagi:hover{background:var(--amber);color:white;}
+
+/* ADMIN */
+.admin-topbar{background:var(--ink);color:var(--cream);padding:1.4rem 2rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;}
+.admin-topbar h2{font-family:'Playfair Display',serif;font-size:clamp(1.25rem,3vw,1.8rem);font-weight:900;}
+.admin-topbar h2 em{color:var(--amber-light);font-style:normal;}
+.admin-meta{font-size:0.8rem;opacity:0.55;margin-top:0.2rem;}
+.admin-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:1rem;padding:1.4rem 2rem;border-bottom:1px solid rgba(232,137,12,0.13);}
+.stat{background:white;border-radius:14px;padding:1rem 1.25rem;border:1px solid rgba(232,137,12,0.13);box-shadow:0 2px 10px var(--sh);}
+.stat-lbl{font-size:0.72rem;font-weight:700;letter-spacing:0.09em;text-transform:uppercase;color:#c4ad91;margin-bottom:0.25rem;}
+.stat-val{font-family:'Playfair Display',serif;font-size:1.9rem;font-weight:900;color:var(--ink);line-height:1;}
+.stat-val.a{color:var(--amber);}
+.stat-val.g{font-size:1.1rem;color:var(--sage);}
+.dash-body{flex:1;padding:1.4rem 2rem 3rem;}
+.admin-tabs{display:flex;border-bottom:2px solid rgba(232,137,12,0.15);margin-bottom:1.4rem;}
+.tab-btn{background:none;border:none;border-bottom:2.5px solid transparent;padding:0.6rem 1.2rem;font-family:'DM Sans',sans-serif;font-size:0.88rem;font-weight:600;color:#c4ad91;cursor:pointer;transition:var(--tr);margin-bottom:-2px;}
+.tab-btn.active{color:var(--amber);border-bottom-color:var(--amber);}
+.tab-panel{display:none;}
+.tab-panel.active{display:block;}
+.dash-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem;flex-wrap:wrap;gap:0.8rem;}
+.dash-title{font-family:'Playfair Display',serif;font-size:1.35rem;font-weight:900;}
+.search-wrap{display:flex;align-items:center;gap:0.5rem;background:white;border:1.5px solid rgba(232,137,12,0.22);border-radius:50px;padding:0.48rem 1rem;box-shadow:0 2px 8px var(--sh);}
+.search-wrap input{border:none;outline:none;background:transparent;font-family:'DM Sans',sans-serif;font-size:0.88rem;color:var(--ink);width:175px;}
+.q-list{display:flex;flex-direction:column;gap:0.8rem;}
+.q-row{background:white;border:1px solid rgba(232,137,12,0.13);border-radius:16px;padding:1.15rem 1.35rem;box-shadow:0 2px 10px var(--sh);display:flex;align-items:flex-start;gap:0.9rem;transition:var(--tr);animation:fadeUp 0.32s ease both;}
+.q-row:hover{box-shadow:0 6px 22px var(--sh2);border-color:rgba(232,137,12,0.28);}
+.q-row-num{background:var(--amber-pale);color:var(--amber);border-radius:10px;padding:0.38rem 0.6rem;font-family:'Playfair Display',serif;font-size:0.95rem;font-weight:900;min-width:40px;text-align:center;flex-shrink:0;}
+.q-row-body{flex:1;}
+.q-row-text{font-size:0.95rem;line-height:1.62;color:var(--ink);margin-bottom:0.35rem;}
+.q-row-meta{font-size:0.73rem;color:#c4ad91;}
+.btn-del{background:none;border:1px solid rgba(192,68,10,0.22);color:var(--rust);border-radius:9px;padding:0.48rem 0.85rem;font-family:'DM Sans',sans-serif;font-size:0.8rem;font-weight:600;cursor:pointer;transition:var(--tr);flex-shrink:0;align-self:center;}
+.btn-del:hover{background:var(--rust);color:white;border-color:var(--rust);}
+.empty-state{text-align:center;padding:3rem 1.5rem;color:#c4ad91;}
+.empty-icon{font-size:2.8rem;margin-bottom:0.6rem;}
+.users-table{width:100%;border-collapse:collapse;font-size:0.88rem;}
+.users-table th{text-align:left;padding:0.6rem 0.9rem;font-size:0.7rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#c4ad91;border-bottom:1px solid rgba(232,137,12,0.13);}
+.users-table td{padding:0.75rem 0.9rem;border-bottom:1px solid rgba(232,137,12,0.08);vertical-align:middle;}
+.users-table tr:hover td{background:rgba(253,246,236,0.5);}
+.badge{display:inline-block;border-radius:50px;padding:0.18rem 0.65rem;font-size:0.7rem;font-weight:700;}
+.badge.admin{background:#e3f0ff;color:#1565c0;}
+.badge.user{background:var(--amber-pale);color:var(--rust);}
+.verified{color:var(--sage);font-size:0.75rem;font-weight:600;}
+.unverified{color:#c4ad91;font-size:0.75rem;}
+
+/* CONFIRM */
+.overlay{position:fixed;inset:0;z-index:300;background:rgba(26,18,9,0.55);backdrop-filter:blur(7px);display:flex;align-items:center;justify-content:center;padding:1rem;opacity:0;pointer-events:none;transition:opacity 0.24s;}
+.overlay.open{opacity:1;pointer-events:all;}
+.confirm-box{background:white;border-radius:22px;padding:2.2rem 1.8rem;max-width:340px;width:100%;text-align:center;box-shadow:0 20px 60px rgba(26,18,9,0.28);transform:scale(0.92);transition:transform 0.32s cubic-bezier(.34,1.56,.64,1);}
+.overlay.open .confirm-box{transform:scale(1);}
+.confirm-icon{font-size:2rem;margin-bottom:0.75rem;}
+.confirm-box h3{font-family:'Playfair Display',serif;font-size:1.35rem;font-weight:900;margin-bottom:0.45rem;}
+.confirm-box p{color:#6b5c42;font-size:0.88rem;margin-bottom:1.5rem;line-height:1.55;}
+.confirm-btns{display:flex;gap:0.7rem;justify-content:center;}
+.btn-no{background:rgba(26,18,9,0.08);color:var(--ink);border:none;border-radius:50px;padding:0.62rem 1.4rem;font-family:'DM Sans',sans-serif;font-size:0.88rem;font-weight:600;cursor:pointer;transition:var(--tr);}
+.btn-no:hover{background:rgba(26,18,9,0.14);}
+.btn-yes{background:var(--rust);color:white;border:none;border-radius:50px;padding:0.62rem 1.4rem;font-family:'DM Sans',sans-serif;font-size:0.88rem;font-weight:600;cursor:pointer;transition:var(--tr);}
+.btn-yes:hover{background:#a03808;}
+
+/* TOAST */
+.toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(120px);background:var(--sage);color:white;padding:0.8rem 1.8rem;border-radius:50px;font-weight:600;font-size:0.88rem;box-shadow:0 8px 28px rgba(74,124,89,0.38);transition:transform 0.42s cubic-bezier(.34,1.56,.64,1);z-index:999;white-space:nowrap;}
+.toast.show{transform:translateX(-50%) translateY(0);}
+.watermark{position:fixed;bottom:0.85rem;right:1.1rem;z-index:50;font-size:0.7rem;font-weight:600;color:rgba(26,18,9,0.28);pointer-events:none;user-select:none;}
+.watermark::before{content:'◆ ';font-size:0.45rem;color:var(--amber);}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
+.hidden{display:none!important;}
+@media(max-width:768px){header{padding:1rem 1.2rem;}.home-body{padding:2rem 1.1rem 5rem;}.ask-card,.auth-box{padding:1.5rem 1.2rem;}.admin-topbar,.admin-stats,.dash-body{padding:1.1rem 1.2rem;}.search-wrap input{width:120px;}}
+@media(max-width:480px){.logo{font-size:1.2rem;}.btn-hdr{padding:0.44rem 0.9rem;font-size:0.8rem;}.hero h1{font-size:1.9rem;}.q-row{flex-wrap:wrap;}.btn-del{width:100%;margin-top:0.4rem;}.admin-stats{grid-template-columns:1fr 1fr;}}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- HOME -->
+<div id="vHome" class="view active">
+  <header>
+    <div class="logo">Ruang<em>.</em>Tanya</div>
+    <div class="hbtns">
+      <button class="btn-hdr out hidden" id="btnAdminPanel" onclick="goAdmin()">Panel Admin</button>
+      <button class="btn-hdr out hidden" id="btnLogout" onclick="doLogout()">Keluar</button>
+      <button class="btn-hdr out" id="btnLogin" onclick="showV('vLogin')">Masuk</button>
+      <button class="btn-hdr" id="btnRegister" onclick="showV('vRegister')">Daftar</button>
+    </div>
+  </header>
+  <div class="home-body">
+    <div class="hero">
+      <div class="hero-badge">✦ Tanya Apa Saja</div>
+      <h1>Punya <em>pertanyaan</em>?<br>Tulis di sini.</h1>
+      <p>Kirimkan pertanyaanmu. Tidak perlu nama — cukup pertanyaanmu.</p>
+    </div>
+    <div class="ask-card" id="askCard">
+      <div class="ask-lbl">✏ Tulis Pertanyaan</div>
+      <textarea id="qInput" placeholder="Ketik pertanyaanmu di sini..." maxlength="500"></textarea>
+      <div class="form-footer">
+        <span class="char-count" id="charCount">0 / 500</span>
+        <button class="btn-send" id="btnKirim" onclick="kirim()">Kirim ✦</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- LOGIN -->
+<div id="vLogin" class="view">
+  <header>
+    <div class="logo">Ruang<em>.</em>Tanya</div>
+    <div class="hbtns"><button class="btn-hdr out" onclick="showV('vHome')">← Kembali</button></div>
+  </header>
+  <div class="auth-center">
+    <div class="auth-box">
+      <div class="auth-icon">🔑</div>
+      <div class="auth-title">Masuk</div>
+      <p class="auth-sub">Login ke akunmu.</p>
+      <div class="alert err" id="loginAlert"></div>
+      <div class="field"><label>Email</label><input type="email" id="lEmail" placeholder="email@kamu.com"></div>
+      <div class="field"><label>Password</label><input type="password" id="lPass" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()"></div>
+      <button class="btn-full" id="btnDoLogin" onclick="doLogin()">Masuk ✦</button>
+      <p class="auth-switch">Belum punya akun? <a onclick="showV('vRegister')">Daftar sekarang</a></p>
+    </div>
+  </div>
+</div>
+
+<!-- REGISTER -->
+<div id="vRegister" class="view">
+  <header>
+    <div class="logo">Ruang<em>.</em>Tanya</div>
+    <div class="hbtns"><button class="btn-hdr out" onclick="showV('vHome')">← Kembali</button></div>
+  </header>
+  <div class="auth-center">
+    <div class="auth-box">
+      <div class="auth-icon">📝</div>
+      <div class="auth-title">Daftar Akun</div>
+      <p class="auth-sub">Isi data dirimu untuk membuat akun baru.</p>
+      <div class="alert err" id="regAlert"></div>
+      <div class="field">
+        <label>Nomor WhatsApp</label>
+        <input type="tel" id="rWa" placeholder="08xxxxxxxxxx">
+        <div class="field-hint">Format: 08xx atau +628xx</div>
+        <div class="field-err" id="waErr"></div>
+      </div>
+      <div class="field">
+        <label>Email</label>
+        <input type="email" id="rEmail" placeholder="email@kamu.com">
+        <div class="field-err" id="emailErr"></div>
+      </div>
+      <div class="field">
+        <label>Username</label>
+        <input type="text" id="rUsername" placeholder="Nama kamu (huruf & spasi saja)">
+        <div class="field-hint">Hanya huruf dan spasi, tidak boleh ada angka</div>
+        <div class="field-err" id="usernameErr"></div>
+      </div>
+      <div class="field">
+        <label>Password</label>
+        <input type="password" id="rPass" placeholder="Min 6 karakter + simbol">
+        <div class="field-hint">Minimal 6 karakter, wajib mengandung simbol (@#$! dll)</div>
+        <div class="field-err" id="passErr"></div>
+      </div>
+      <div class="field">
+        <label>Konfirmasi Password</label>
+        <input type="password" id="rPassC" placeholder="Ulangi password">
+        <div class="field-err" id="passConfErr"></div>
+      </div>
+      <button class="btn-full" id="btnDoReg" onclick="doRegister()">Daftar ✦</button>
+      <p class="auth-switch">Sudah punya akun? <a onclick="showV('vLogin')">Masuk</a></p>
+    </div>
+  </div>
+</div>
+
+<!-- VERIFY EMAIL -->
+<div id="vVerify" class="view">
+  <header>
+    <div class="logo">Ruang<em>.</em>Tanya</div>
+  </header>
+  <div class="auth-center">
+    <div class="auth-box">
+      <div class="verify-wrap">
+        <div class="big-icon">📧</div>
+        <h2>Cek Emailmu!</h2>
+        <p>Link verifikasi sudah dikirim ke emailmu.<br>Klik link tersebut, lalu kembali ke sini dan login.</p>
+        <button class="btn-full" style="max-width:260px;" onclick="showV('vLogin')">Lanjut ke Login</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ADMIN -->
+<div id="vAdmin" class="view">
+  <header>
+    <div class="logo">Ruang<em>.</em>Tanya</div>
+    <div class="hbtns">
+      <button class="btn-hdr out" onclick="backToHome()">← Back</button>
+      <button class="btn-hdr" onclick="doLogout()">Logout</button>
+    </div>
+  </header>
+  <div class="admin-topbar">
+    <div>
+      <h2>Panel <em>Admin</em></h2>
+      <div class="admin-meta" id="adminMeta">—</div>
+    </div>
+  </div>
+  <div class="admin-stats">
+    <div class="stat"><div class="stat-lbl">Total Pertanyaan</div><div class="stat-val a" id="sTotal">—</div></div>
+    <div class="stat"><div class="stat-lbl">Hari Ini</div><div class="stat-val" id="sToday">—</div></div>
+    <div class="stat"><div class="stat-lbl">Total Pengguna</div><div class="stat-val" id="sUsers">—</div></div>
+    <div class="stat"><div class="stat-lbl">Status</div><div class="stat-val g">● Online</div></div>
+  </div>
+  <div class="dash-body">
+    <div class="admin-tabs">
+      <button class="tab-btn active" onclick="switchTab('tQ',this)">Pertanyaan</button>
+      <button class="tab-btn" onclick="switchTab('tUsers',this)">Pengguna</button>
+    </div>
+    <div class="tab-panel active" id="tQ">
+      <div class="dash-header">
+        <div class="dash-title">Semua Pertanyaan</div>
+        <div class="search-wrap">
+          <span style="color:#c4ad91;font-size:14px;">🔍</span>
+          <input type="text" id="searchIn" placeholder="Cari..." oninput="filterQ()">
+        </div>
+      </div>
+      <div class="q-list" id="adminList"></div>
+    </div>
+    <div class="tab-panel" id="tUsers">
+      <div class="dash-header">
+        <div class="dash-title">Daftar Pengguna</div>
+        <button class="btn-hdr" style="padding:0.48rem 1.1rem;font-size:0.84rem;" onclick="loadUsers()">↻ Refresh</button>
+      </div>
+      <div style="overflow-x:auto;">
+        <table class="users-table">
+          <thead><tr><th>#</th><th>Username</th><th>Email</th><th>WhatsApp</th><th>Role</th><th>Email</th><th>Bergabung</th></tr></thead>
+          <tbody id="usersTbody"></tbody>
+        </table>
+      </div>
+      <div id="usersEmpty" class="empty-state hidden"><div class="empty-icon">👥</div><p>Belum ada pengguna.</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- CONFIRM DELETE -->
+<div class="overlay" id="confirmOverlay">
+  <div class="confirm-box">
+    <div class="confirm-icon">🗑</div>
+    <h3>Hapus Pertanyaan?</h3>
+    <p>Pertanyaan ini akan dihapus secara permanen.</p>
+    <div class="confirm-btns">
+      <button class="btn-no" onclick="closeConfirm()">Batal</button>
+      <button class="btn-yes" onclick="hapusConfirm()">Ya, Hapus</button>
+    </div>
+  </div>
+</div>
+
+</div>
+<div class="toast" id="toast"></div>
+<div class="watermark">Created By @Khaliji</div>
+
+<script>
+const API = ''; // kosong = relative path, otomatis ikut domain
+
+let token = localStorage.getItem('rq_token') || null;
+let currentUser = null;
+let allQuestions = [], allUsers = [], delTarget = null;
+
+// ---- INIT ----
+window.addEventListener('DOMContentLoaded', async () => {
+  bindCounter();
+  // Cek redirect dari verifikasi email
+  const params = new URLSearchParams(location.search);
+  if (params.get('verified') === 'ok') {
+    showToast('✅ Email berhasil diverifikasi! Silakan login.');
+    history.replaceState({}, '', '/');
+    showV('vLogin');
+  } else if (params.get('verified') === 'fail') {
+    showToast('❌ Link verifikasi tidak valid.');
+    history.replaceState({}, '', '/');
+  } else if (params.get('verified') === 'expired') {
+    showToast('⏰ Link verifikasi sudah kadaluarsa. Daftar ulang.');
+    history.replaceState({}, '', '/');
+  }
+
+  if (token) await checkMe();
+  updateHeader();
+});
+
+async function checkMe() {
+  try {
+    const r = await api('GET', '/api/auth/me');
+    if (r.user) currentUser = r.user;
+    else { token = null; localStorage.removeItem('rq_token'); }
+  } catch { token = null; localStorage.removeItem('rq_token'); }
+}
+
+function updateHeader() {
+  const logged = !!currentUser;
+  const isAdmin = currentUser && currentUser.role === 'admin';
+  document.getElementById('btnLogin').classList.toggle('hidden', logged);
+  document.getElementById('btnRegister').classList.toggle('hidden', logged);
+  document.getElementById('btnLogout').classList.toggle('hidden', !logged);
+  document.getElementById('btnAdminPanel').classList.toggle('hidden', !isAdmin);
+}
+
+// ---- NAV ----
+function showV(id) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+function backToHome() { showV('vHome'); resetAskCard(); }
+
+async function goAdmin() {
+  if (!currentUser || currentUser.role !== 'admin') { showToast('⚠ Akses ditolak'); return; }
+  document.getElementById('adminMeta').textContent =
+    'Login sebagai ' + currentUser.username + ' · ' +
+    new Date().toLocaleDateString('id-ID', {weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  showV('vAdmin');
+  await Promise.all([loadQuestions(), loadUsers(), loadStats()]);
+}
+
+// ---- COUNTER ----
+function bindCounter() {
+  const el = document.getElementById('qInput');
+  if (el) el.addEventListener('input', () => {
+    document.getElementById('charCount').textContent = el.value.length + ' / 500';
+  });
+}
+
+// ---- KIRIM PERTANYAAN ----
+async function kirim() {
+  const input = document.getElementById('qInput');
+  const text = (input ? input.value : '').trim();
+  if (!text) { showToast('⚠ Tulis pertanyaan dulu!'); return; }
+  const btn = document.getElementById('btnKirim');
+  btn.disabled = true; btn.textContent = 'Mengirim...';
+  try {
+    await api('POST', '/api/questions', { text, token });
+    document.getElementById('askCard').innerHTML =
+      '<div class="success-wrap"><div class="sicon">✅</div><h3>Pertanyaan Terkirim!</h3>' +
+      '<p>Pertanyaanmu sudah kami terima.<br>Terima kasih!</p>' +
+      '<button class="btn-lagi" onclick="resetAskCard()">Kirim Lagi</button></div>';
+  } catch(e) {
+    showToast('❌ Gagal kirim: ' + e.message);
+    btn.disabled = false; btn.textContent = 'Kirim ✦';
+  }
+}
+
+function resetAskCard() {
+  document.getElementById('askCard').innerHTML =
+    '<div class="ask-lbl">✏ Tulis Pertanyaan</div>' +
+    '<textarea id="qInput" placeholder="Ketik pertanyaanmu di sini..." maxlength="500"></textarea>' +
+    '<div class="form-footer"><span class="char-count" id="charCount">0 / 500</span>' +
+    '<button class="btn-send" id="btnKirim" onclick="kirim()">Kirim ✦</button></div>';
+  bindCounter();
+  document.getElementById('qInput').focus();
+}
+
+// ---- REGISTER ----
+function vUN(v){if(!v||!v.trim())return'Username tidak boleh kosong';if(/[0-9]/.test(v))return'Username tidak boleh mengandung angka';if(!/^[a-zA-Z\s]+$/.test(v))return'Hanya huruf dan spasi';if(v.trim().length<2)return'Minimal 2 karakter';return null;}
+function vWA(v){const c=(v||'').replace(/\s/g,'');if(!c)return'Nomor WA tidak boleh kosong';if(!/^(\+62|62|08)\d{8,12}$/.test(c))return'Format tidak valid (08xx atau +628xx)';return null;}
+function vPW(v){if(!v||v.length<6)return'Minimal 6 karakter';if(!/[!@#$%^&*()\-_=+\[\]{};':"\\|,.<>/?]/.test(v))return'Wajib mengandung simbol';return null;}
+function showFErr(id,msg){const el=document.getElementById(id);el.textContent=msg||'';el.classList.toggle('show',!!msg);}
+
+async function doRegister() {
+  const wa=document.getElementById('rWa').value.trim();
+  const email=document.getElementById('rEmail').value.trim();
+  const username=document.getElementById('rUsername').value.trim();
+  const pass=document.getElementById('rPass').value;
+  const passC=document.getElementById('rPassC').value;
+
+  ['waErr','emailErr','usernameErr','passErr','passConfErr'].forEach(id=>showFErr(id,''));
+  setAlert('regAlert','','');
+
+  let ok=true;
+  const waE=vWA(wa); if(waE){showFErr('waErr',waE);ok=false;}
+  if(!email||!email.includes('@')){showFErr('emailErr','Email tidak valid');ok=false;}
+  const unE=vUN(username); if(unE){showFErr('usernameErr',unE);ok=false;}
+  const paE=vPW(pass); if(paE){showFErr('passErr',paE);ok=false;}
+  if(pass!==passC){showFErr('passConfErr','Password tidak cocok');ok=false;}
+  if(!ok)return;
+
+  const btn=document.getElementById('btnDoReg');
+  btn.disabled=true; btn.textContent='Memproses...';
+  try {
+    await api('POST','/api/auth/register',{whatsapp:wa,email,username,password:pass});
+    showV('vVerify');
+  } catch(e) {
+    const fe=e.field;
+    if(fe==='whatsapp')showFErr('waErr',e.message);
+    else if(fe==='email')showFErr('emailErr',e.message);
+    else if(fe==='username')showFErr('usernameErr',e.message);
+    else setAlert('regAlert',e.message,'err');
+  }
+  btn.disabled=false; btn.textContent='Daftar ✦';
+}
+
+// ---- LOGIN ----
+async function doLogin() {
+  const email=document.getElementById('lEmail').value.trim();
+  const pass=document.getElementById('lPass').value;
+  if(!email||!pass){setAlert('loginAlert','Isi email dan password','err');return;}
+  const btn=document.getElementById('btnDoLogin');
+  btn.disabled=true; btn.textContent='Memproses...';
+  setAlert('loginAlert','','');
+  try {
+    const r = await api('POST','/api/auth/login',{email,password:pass});
+    token = r.token;
+    currentUser = r.user;
+    localStorage.setItem('rq_token', token);
+    updateHeader();
+    showV('vHome');
+    showToast('👋 Selamat datang, ' + r.user.username + '!');
+  } catch(e) {
+    setAlert('loginAlert', e.message, 'err');
+  }
+  btn.disabled=false; btn.textContent='Masuk ✦';
+}
+
+// ---- LOGOUT ----
+async function doLogout() {
+  token=null; currentUser=null;
+  localStorage.removeItem('rq_token');
+  updateHeader();
+  showV('vHome');
+  resetAskCard();
+  showToast('Berhasil logout.');
+}
+
+// ---- ADMIN DATA ----
+async function loadQuestions() {
+  try {
+    const r = await api('GET','/api/questions');
+    allQuestions = r.questions || [];
+    renderQ();
+  } catch(e) { showToast('❌ '+e.message); }
+}
+async function loadUsers() {
+  try {
+    const r = await api('GET','/api/questions/admin/users');
+    allUsers = r.users || [];
+    renderUsers();
+  } catch(e) {}
+}
+async function loadStats() {
+  try {
+    const r = await api('GET','/api/questions/admin/stats');
+    document.getElementById('sTotal').textContent = r.total;
+    document.getElementById('sToday').textContent = r.today;
+    document.getElementById('sUsers').textContent = r.users;
+  } catch(e) {}
+}
+
+function renderQ() {
+  const kw = (document.getElementById('searchIn').value||'').toLowerCase();
+  const list = document.getElementById('adminList');
+  const data = kw ? allQuestions.filter(q=>q.text.toLowerCase().includes(kw)) : allQuestions;
+  if (!data.length) {
+    list.innerHTML='<div class="empty-state"><div class="empty-icon">📭</div><p>'+(kw?'Tidak ada hasil.':'Belum ada pertanyaan.')+' </p></div>';
+    return;
+  }
+  list.innerHTML = data.map((q,i)=>{
+    const d=new Date(q.created_at).toLocaleString('id-ID',{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});
+    return '<div class="q-row"><div class="q-row-num">#'+(i+1)+'</div>' +
+      '<div class="q-row-body"><div class="q-row-text">'+esc(q.text)+'</div>' +
+      '<div class="q-row-meta">🕐 '+d+(q.username?' · '+esc(q.username):'')+'</div></div>' +
+      '<button class="btn-del" onclick="askDel('+q.id+')">🗑 Hapus</button></div>';
+  }).join('');
+}
+
+function renderUsers() {
+  const tbody = document.getElementById('usersTbody');
+  const empty = document.getElementById('usersEmpty');
+  if (!allUsers.length) { tbody.innerHTML=''; empty.classList.remove('hidden'); return; }
+  empty.classList.add('hidden');
+  tbody.innerHTML = allUsers.map((u,i)=>{
+    const d=new Date(u.created_at).toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'});
+    const vf=u.email_verified?'<span class="verified">✓ Terverifikasi</span>':'<span class="unverified">Belum</span>';
+    return '<tr><td>'+(i+1)+'</td><td>'+esc(u.username)+'</td><td>'+esc(u.email)+'</td>' +
+      '<td>'+esc(u.whatsapp)+'</td><td><span class="badge '+u.role+'">'+u.role+'</span></td>' +
+      '<td>'+vf+'</td><td>'+d+'</td></tr>';
+  }).join('');
+}
+
+function filterQ() { renderQ(); }
+
+function askDel(id) { delTarget=id; document.getElementById('confirmOverlay').classList.add('open'); }
+function closeConfirm() { delTarget=null; document.getElementById('confirmOverlay').classList.remove('open'); }
+async function hapusConfirm() {
+  try {
+    await api('DELETE','/api/questions/'+delTarget);
+    allQuestions=allQuestions.filter(q=>q.id!==delTarget);
+    renderQ();
+    await loadStats();
+    showToast('🗑 Berhasil dihapus');
+  } catch(e) { showToast('❌ '+e.message); }
+  closeConfirm();
+}
+
+function switchTab(panelId, btn) {
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById(panelId).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ---- API HELPER ----
+async function api(method, path, body) {
+  const opts = { method, headers: { 'Content-Type': 'application/json' } };
+  if (token) opts.headers['Authorization'] = 'Bearer ' + token;
+  if (body) opts.body = JSON.stringify(body);
+  const res = await fetch(API + path, opts);
+  const data = await res.json();
+  if (!res.ok) {
+    const err = new Error(data.error || 'Request gagal');
+    err.field = data.field;
+    throw err;
+  }
+  return data;
+}
+
+// ---- UTILS ----
+function esc(t){return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function setAlert(id,msg,type){const el=document.getElementById(id);el.textContent=msg;el.className='alert'+(msg?' show '+type:'');}
+function showToast(msg){
+  const el=document.getElementById('toast');
+  el.textContent=msg; el.classList.add('show');
+  clearTimeout(window._t);
+  window._t=setTimeout(()=>el.classList.remove('show'),2800);
+}
+</script>
+</body>
+</html>
